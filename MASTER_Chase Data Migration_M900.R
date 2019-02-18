@@ -102,13 +102,45 @@
     )
      
  # Exercise 1: Card data
-    summary(card.tb)
-    card.lm <-
-      lm(
-        formula = wage ~ educ + exper + IQ,
-        data = card.tb
+    #unstandardized coefficients
+      summary(card.tb) #data summary
+      
+      card.lm <- #regression model object
+        lm(
+          formula = wage ~ educ + exper + IQ,
+          data = card.tb
+        )
+      
+      summary(card.lm) #regression table output
+    
+    #standardized coefficients
+      card.standardized.lm <- #regression model object
+        lm(
+          formula = wage ~ educ + exper + IQ,
+          data = card.tb %>% scale(.) %>% as_tibble()
+        )
+      summary(card.standardized.lm)  
+      
+    #Why has sample size changed?
+      apply( # shows 949 NA values for "IQ" variable.
+        card.tb[,names(card.tb) %in% c("wage","educ","exper","IQ")],
+        2,
+        function(x){length(which(is.na(x)))}
       )
-    summary(card.lm)
+      nrow(card.tb) - length(which(is.na(card.tb$IQ))) # shows 2061 viable data rows.
+  
+  #NELS Data - Dummy Variables
+    
+    #Basic Bivariate Regression
+    summary(nels.tb)
+    
+    nels.lm <- #regression model object
+      lm(
+        formula = bygrades ~ female,
+        data = nels.tb
+      )
+    
+    summary(nels.lm) #regression table output
     
     
     
