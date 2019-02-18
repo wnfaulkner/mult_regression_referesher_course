@@ -43,11 +43,13 @@
     
   #In case working on new R install that does not have packages installed
     #install.common.packages()
-     if( !require( foreign ) ) install.packages("foreign")
+      if( !require( foreign ) ) install.packages("foreign")
+      if( !require( ggplot2 ) ) install.packages("ggplot2")    
     
   #Load libraries
     LoadCommonPackages()
     library(foreign)
+    library(ggplot2)
     
   #Section Clocking
     section0.duration <- Sys.time() - section0.starttime
@@ -93,7 +95,7 @@
   #card.tb
   #nels.tb
     
-### 1-IMPORT  ----------------------------------------------------------------------
+### 2 - EXERCISES  ----------------------------------------------------------------------
   
  # Happiness Example
    lm(
@@ -129,25 +131,61 @@
       )
       nrow(card.tb) - length(which(is.na(card.tb$IQ))) # shows 2061 viable data rows.
   
-  #NELS Data - Dummy Variables
+  #Exercise 2: NELS Data - Dummy Variables
     
     #Basic Bivariate Regression
-    summary(nels.tb)
+      summary(nels.tb)
+      
+      nels.lm <- #regression model object
+        lm(
+          formula = bygrades ~ female,
+          data = nels.tb
+        )
+      
+      summary(nels.lm) #regression table output
+      
+    #NELS Multipel Regression
+       nels.mult.lm <- #regression model object
+        lm(
+          formula = bygrades ~ female + asian + latino + black + firstgen + byfaminc,
+          data = nels.tb
+        )
+      
+      summary(nels.mult.lm) #regression table output
     
-    nels.lm <- #regression model object
-      lm(
-        formula = bygrades ~ female,
-        data = nels.tb
-      )
+  # Scatter Plot with Regression Line
+    dat <- nels.tb
     
-    summary(nels.lm) #regression table output
+    scatter.plot <- 
+      ggplot(
+        data = nels.tb,
+        aes(x = byfaminc, y = bygrades)
+      ) +
+      geom_point(
+        size = 2,
+        shape = 23,
+        color = "red",
+        alpha = 0.5
+      ) +
+      geom_smooth(
+        method = lm,
+        se = TRUE
+      ) +
+      geom_rug() 
+    scatter.plot
     
-    
-    
-    
-    
-    
-    
+  # Exercise 3: Card data mutliple regression: Do men whose fathers have college 
+    #degrees earn more than those who did not finish high school?
+      
+      card.father.lm <- #regression model object
+        lm(
+          formula = wage ~ educ + exper + IQ + f_hs + f_somecoll + f_coll,
+          data = card.tb
+        )
+      
+      summary(card.father.lm) #regression table output
+      
+    sd(card.tb$wage)
     
     
     
